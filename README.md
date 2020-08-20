@@ -1,4 +1,4 @@
-# Noice Controller Back End
+# Noise Controller Back End
 
 Our backend to handle users and to save scores and classes.
 This backend was created to handle users to save their scores and classes. I am creating it to learn how to use MongoDB and Graph QL.

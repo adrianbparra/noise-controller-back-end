@@ -4,18 +4,29 @@
   "description": "'Back end for noise controller to handle user data'",
   "main": "server.js",
   "scripts": {
+    "start": "node server.js",
+    "server": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adrianbparra/noise-controller-back-end.git"
   },
   "keywords": [
     "node",
     "graphql",
     "express"
   ],
+  "homepage": "https://github.com/adrianbparra/noise-controller-back-end#readme",
   "author": "Adrian Parra",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "express": "^4.17.1",
     "express-graphql": "^0.11.0",
-    "graphql": "^15.3.0"
+    "graphql": "^15.3.0",
+    "lodash": "^4.17.20"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
   }
 }

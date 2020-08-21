@@ -3,7 +3,9 @@ const {
     GraphQLString, 
     GraphQLInt, 
     GraphQLID, 
-    GraphQLSchema
+    GraphQLSchema,
+    GraphQLNonNull,
+    GraphQLList
 } = require('graphql');
 
 const _ = require("lodash");
@@ -42,7 +44,7 @@ var users =[
 var classes = [
     {
         "id": '1',
-        "className": "English",
+        "name": "English",
         "teacherId": "1",
         "theme": "Farm",
         "grade": "2",
@@ -51,7 +53,7 @@ var classes = [
     },
     {
         "id": '2',
-        "className": "Spanish",
+        "name": "Spanish",
         "teacherId": "2",
         "theme": "Farm",
         "grade": "3",
@@ -60,7 +62,7 @@ var classes = [
     },
     {
         "id": "3",
-        "className": "Math",
+        "name": "Math",
         "teacherId": "3",
         "theme": "snake",
         "grade": "kindergarden",
@@ -69,7 +71,7 @@ var classes = [
     },
     {
         "id": "4",
-        "className": "Reading",
+        "name": "Reading",
         "teacherId": "2",
         "theme": "snake",
         "grade": "1",
@@ -78,7 +80,7 @@ var classes = [
     },
     {
         "id": "5",
-        "className": "Language",
+        "name": "Language",
         "teacherId": "1",
         "theme": "snake",
         "grade": "2",
@@ -87,7 +89,7 @@ var classes = [
     },
     {
         "id": "6",
-        "className": "Testing",
+        "name": "Testing",
         "teacherId": "1",
         "theme": "snake",
         "grade": "2",
@@ -100,15 +102,15 @@ const ClassesType = new GraphQLObjectType({
     name: "Class",
     fields: () => ({
         id: {type: GraphQLID},
-        className: {type: GraphQLString},
+        name: {type: GraphQLString},
         theme: {type: GraphQLString},
         grade: {type: GraphQLString},
         numberOfKids: {type: GraphQLInt},
         streak: {type:GraphQLInt},
+        teacherId: {type: GraphQLID},
         teacher: {
             type: UserType,
             resolve(parent,args){
-                console.log(parent);
                 return _.find(users,{id: parent.teacherId})
             }
         },
@@ -126,7 +128,13 @@ const UserType = new GraphQLObjectType({
         lastName: {type: GraphQLString},
         title: {type: GraphQLString},
         micSensitivity: {type:GraphQLInt},
-        theme: {type: GraphQLString}
+        theme: {type: GraphQLString},
+        classes: {
+            type: new GraphQLList(ClassesType),
+            resolve(parent, args){
+                return _.filter(classes, {teacherId: parent.id})
+            }
+        }
     })
 });
 
@@ -134,7 +142,7 @@ const UserType = new GraphQLObjectType({
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
-        classwithUser: {
+        class: {
             type: ClassesType,
             args: {id: {type: GraphQLID}},
             resolve(parent, args){
@@ -147,6 +155,18 @@ const RootQuery = new GraphQLObjectType({
             resolve(parent,args){
                 return _.find(users,{id: args.id});
                 //code to get data from db / other source
+            }
+        },
+        classes: {
+            type: new GraphQLList(ClassesType),
+            resolve(parent,args){
+                return classes
+            }
+        },
+        users: {
+            type: new GraphQLList(UserType),
+            resolve(parent,args){
+                return users
             }
         }
     }

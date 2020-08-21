@@ -73,7 +73,7 @@ Add additional notes about how to deploy this on a live system
 
 ## Contributing
 
-Please try to contribute if you can. Create your pull request to me.
+When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
 
 ## Versioning
 
@@ -83,10 +83,6 @@ We use [SemVer](http://semver.org/) for versioning.
 
 * **Adrian Parra** - *Initial work* - [AdrianbParra](https://github.com/adrianbparra)
 
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
 
 ## Acknowledgments
 

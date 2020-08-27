@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express");
 const {graphqlHTTP} = require("express-graphql");
 const schema = require("./schema/schema");
@@ -5,10 +6,7 @@ const mongoose = require('mongoose');
 
 const server = express();
 
-const password = "n0153c0ntr0ll3r"
-const dbname = "noise-controller"
-
-mongoose.connect(`mongodb+srv://noise-admin:${password}@noise-controller-be.jiy1o.mongodb.net/${dbname}?retryWrites=true&w=majority`, {
+mongoose.connect(`mongodb+srv://${process.env.DB-USER}:${process.env.DB-PASS}@noise-controller-be.jiy1o.mongodb.net/${process.env.DB-HOST}?retryWrites=true&w=majority`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })

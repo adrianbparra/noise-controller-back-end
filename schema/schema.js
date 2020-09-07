@@ -5,100 +5,35 @@ const {
     GraphQLID, 
     GraphQLSchema,
     GraphQLNonNull,
-    GraphQLList
+    GraphQLList,
+    GraphQLScalarType
 } = require('graphql');
 
-const _ = require("lodash");
+const bcrypt = require('bcrypt');
 
-//dummy data 
-var users =[
-    {
-        id:"1",
-        username: "adrianbparra",
-        firstName: "Adrian",
-        lastName: "Parra",
-        title: "Mr.",
-        micSensitivity: 4,
-        theme: "Farm"
-    },
-    {
-        id:"2",
-        username: "beautiful",
-        firstName: "Esme",
-        lastName: "Roman",
-        title: "Ms.",
-        micSensitivity: 8,
-        theme: "Farm"
-    },
-    {
-        id:"3",
-        username: "rolly",
-        firstName: "Rolando",
-        lastName: "Parra",
-        title: "Mr.",
-        micSensitivity: 4,
-        theme: "Snake"
-    }
-]
+const Class = require("../models/class.js");
+const User = require("../models/user.js");
+const Score = require("../models/score.js");
 
-var classes = [
-    {
-        "id": '1',
-        "name": "English",
-        "teacherId": "1",
-        "theme": "Farm",
-        "grade": "2",
-        "numberOfKids": 12,
-        "streak": 5,
-    },
-    {
-        "id": '2',
-        "name": "Spanish",
-        "teacherId": "2",
-        "theme": "Farm",
-        "grade": "3",
-        "numberOfKids": 24,
-        "streak": 2,
-    },
-    {
-        "id": "3",
-        "name": "Math",
-        "teacherId": "3",
-        "theme": "snake",
-        "grade": "kindergarden",
-        "numberOfKids": 18,
-        "streak": 4,
-    },
-    {
-        "id": "4",
-        "name": "Reading",
-        "teacherId": "2",
-        "theme": "snake",
-        "grade": "1",
-        "numberOfKids": 16,
-        "streak": 2,
-    },
-    {
-        "id": "5",
-        "name": "Language",
-        "teacherId": "1",
-        "theme": "snake",
-        "grade": "2",
-        "numberOfKids": 12,
-        "streak": 4,
-    },
-    {
-        "id": "6",
-        "name": "Testing",
-        "teacherId": "1",
-        "theme": "snake",
-        "grade": "2",
-        "numberOfKids": 18,
-        "streak": 4,
-    },
-]
+const ScoreType = new GraphQLObjectType({
+    name: "Score",
+    fields:() =>({
+        id: {type: GraphQLID},
+        date: {type: GraphQLString},
+        theme: {type: GraphQLString},
+        score: {type: GraphQLInt},
+        streak: {type: GraphQLInt},
+        classId: {type: GraphQLID},
+        class: {
+            type: ClassType,
+            resolve(parent,args){
+                return Class.findById(parent.classId)
+            }
+        }
+    })
+})
 
-const ClassesType = new GraphQLObjectType({
+const ClassType = new GraphQLObjectType({
     name: "Class",
     fields: () => ({
         id: {type: GraphQLID},
@@ -111,9 +46,17 @@ const ClassesType = new GraphQLObjectType({
         teacher: {
             type: UserType,
             resolve(parent,args){
-                return _.find(users,{id: parent.teacherId})
+                // return _.find(users,{id: parent.teacherId})
+                return User.findById(parent.teacherId)
             }
         },
+        scores: {
+            type: new GraphQLList(ScoreType),
+            resolve(parent,args){
+                // return all scores for class
+                return Score.find({classId: parent.id})
+            }
+        }
     })
 });
 
@@ -122,17 +65,18 @@ const UserType = new GraphQLObjectType({
     name: "User",
     fields: () => ({
         id: {type: GraphQLID},
-        username: {type: GraphQLString},
         email: {type: GraphQLString},
+        password: {type: GraphQLString},
         firstName: {type: GraphQLString},
         lastName: {type: GraphQLString},
         title: {type: GraphQLString},
         micSensitivity: {type:GraphQLInt},
         theme: {type: GraphQLString},
         classes: {
-            type: new GraphQLList(ClassesType),
+            type: new GraphQLList(ClassType),
             resolve(parent, args){
-                return _.filter(classes, {teacherId: parent.id})
+                // return _.filter(classes, {teacherId: parent.id})
+                return Class.find({teacherId: parent.id})
             }
         }
     })
@@ -142,38 +86,161 @@ const UserType = new GraphQLObjectType({
 const RootQuery = new GraphQLObjectType({
     name: 'RootQueryType',
     fields: {
-        class: {
-            type: ClassesType,
+        score: {
+            type: ScoreType,
             args: {id: {type: GraphQLID}},
             resolve(parent, args){
-                return _.find(classes,{id: args.id})
+                return Score.findById(args.id)
+            }
+        },
+        scores:{
+            type: ScoreType,
+            resolve(parent, args){
+                return Score.find({})
+            }
+        },
+        scoresByClass:{
+            type: ScoreType,
+            args: {classId: {type: GraphQLID}},
+            resolve(parent,args){
+                return Score.find({classId: args.classId})
+            }
+        },
+        class: {
+            type: ClassType,
+            args: {id: {type: GraphQLID}},
+            resolve(parent, args){
+                // return _.find(classes,{id: args.id})
+                return Class.findById(args.id)
+            }
+        },
+        classes: {
+            type: new GraphQLList(ClassType),
+            resolve(parent,args){
+                // return classes
+                return Class.find({})
             }
         },
         user: {
             type: UserType,
             args: {id: {type: GraphQLID}},
             resolve(parent,args){
-                return _.find(users,{id: args.id});
+                // return _.find(users,{id: args.id});
                 //code to get data from db / other source
-            }
-        },
-        classes: {
-            type: new GraphQLList(ClassesType),
-            resolve(parent,args){
-                return classes
+                return User.findById(args.id)
             }
         },
         users: {
             type: new GraphQLList(UserType),
             resolve(parent,args){
-                return users
+                // return users
+                return User.find({})
+            }
+        },
+        login: {
+            type: UserType,
+            args: {
+                email: {type: new GraphQLNonNull(GraphQLString)},
+                password: {type: new GraphQLNonNull(GraphQLString)}
+            },
+            async resolve(parent,args){
+                const userInfo = await User.findOne({email: args.email})
+
+                if(!userInfo) throw new Error("No user found with that email")
+
+                const valid_pass = await bcrypt.compareSync(args.password, userInfo.password)
+                
+                if(!valid_pass) throw new Error("Incorrect credentials")
+
+                return userInfo
             }
         }
     }
 });
 
+const Mutations = new GraphQLObjectType({
+    name: "Mutation",
+    fields:{
+        addUser: {
+            type: UserType,
+            args: {
+                email: {type: GraphQLString},
+                password: {type: GraphQLString},
+                firstName: {type: GraphQLString},
+                lastName: {type: GraphQLString},
+                title: {type: GraphQLString},
+                micSensitivity: {type:GraphQLInt},
+                theme: {type: GraphQLString},
+            },
+            resolve(parent,args){
+                
+                const hashpassword = bcrypt.hashSync(args.password, 12)
+
+                let user = new User({
+                    email: args.email,
+                    password: hashpassword,
+                    firstName: args.firstName,
+                    lastName: args.lastName,
+                    title: args.title,
+                    micSensitivity: args.micSensitivity,
+                    theme: args.theme
+                })
+
+                return user.save();
+            }
+        },
+        addClass: {
+            type: ClassType,
+            args: {
+                name: {type: GraphQLString},
+                theme: {type: GraphQLString},
+                grade: {type: GraphQLString},
+                numberOfKids: {type: GraphQLInt},
+                streak: {type:GraphQLInt},
+                teacherId: {type: GraphQLID},
+            },
+            resolve(parent, args){
+                let newClass = new Class({
+                    name: args.name,
+                    theme: args.theme,
+                    grade: args.grade,
+                    numberOfKids: args.numberOfKids,
+                    streak: args.streak,
+                    teacherId: args.teacherId
+                });
+
+                return newClass.save();
+            }
+        },
+        addScore: {
+            type: ScoreType,
+            args: {
+                date: {type: new GraphQLNonNull(GraphQLString)},
+                theme: {type: GraphQLString},
+                score: {type: new GraphQLNonNull(GraphQLInt)},
+                streak: {type: GraphQLInt},
+                classId:{type: new GraphQLNonNull(GraphQLID)}
+            },
+            resolve(parent,args){
+
+                let newScore = new Score({
+                    date: args.date,
+                    theme: args.theme,
+                    score: args.score,
+                    streak: args.streak,
+                    classId: args.classId
+                })
+
+                return newScore.save()
+            }
+        },
+
+    }
+})
 
 
 module.exports = new GraphQLSchema({
-    query: RootQuery
+    query: RootQuery,
+    mutation: Mutations
 });
+

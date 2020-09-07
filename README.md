@@ -8,16 +8,6 @@ This backend was created to handle users to save their scores and classes. I am 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
 
-### Prerequisites
-
-What things you need to install the software and how to install them
-
-```
-env Variables
-
-
-```
-
 ### Installing
 
 A step by step series of examples that tell you how to get a development env running
@@ -29,27 +19,50 @@ Clone or Fork Repo
 
 yarn install
 
+add .evn Variables
+
 yarn start server
 ```
 
-And repeat
+## End Points
+
+### Users
+
+Add User
+```
+mutation{
+    addUser(
+        email: String | Required | Unique
+        password: String | Required
+        firstName: String
+        lastName: String | Required
+        title: String | Required
+        micSensitivity: Int | Default = 5
+        theme: String | Default = "Farm"
+    ){}
+}
 
 ```
-until finished
+Login
 ```
-
-End with an example of getting some data out of the system or using it for a little demo
+query{
+    login(
+        email: String | Required
+        password: String | Required
+    ){}
+}
+```
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+Coming Soon!
 
 ### Break down into end to end tests
 
 Explain what these tests test and why
 
 ```
-Give an example
+Coming Soon!
 ```
 
 ### And coding style tests
@@ -57,12 +70,8 @@ Give an example
 Explain what these tests test and why
 
 ```
-Give an example
+Coming Soon!
 ```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
 
 ## Built With
 
@@ -73,7 +82,7 @@ Add additional notes about how to deploy this on a live system
 
 ## Contributing
 
-When contributing to this repository, please first discuss the change you wish to make via issue, email, or any other method with the owners of this repository before making a change.
+Please try to contribute if you can. Email me if you would like to contribute.
 
 ## Versioning
 
@@ -87,5 +96,3 @@ We use [SemVer](http://semver.org/) for versioning.
 ## Acknowledgments
 
 * Hat tip to anyone whose code was used
-* Inspiration
-* etc

@@ -24,9 +24,9 @@ add .evn Variables
 yarn start server
 ```
 
-### End Points
+## End Points
 
-## Users
+### Users
 
 Add User
 ```

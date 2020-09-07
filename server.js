@@ -3,12 +3,17 @@ const express = require("express");
 const {graphqlHTTP} = require("express-graphql");
 const schema = require("./schema/schema");
 const mongoose = require('mongoose');
+const cors = require("cors")
 
 const server = express();
 
-mongoose.connect(`mongodb+srv://${process.env.DB-USER}:${process.env.DB-PASS}@noise-controller-be.jiy1o.mongodb.net/${process.env.DB-HOST}?retryWrites=true&w=majority`, {
+//allow cross-origin request
+server.use(cors())
+
+mongoose.connect(`mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@noise-controller-be.jiy1o.mongodb.net/${process.env.DB_CLUSTER}?retryWrites=true&w=majority`, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
+    useCreateIndex: true,
 })
 
 mongoose.connection.once('open',()=>{

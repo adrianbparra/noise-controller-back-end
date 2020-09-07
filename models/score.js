@@ -13,6 +13,3 @@ const scoreSchema = new Schema({
 
 
 module.exports = mongoose.model('Score', scoreSchema)
-
-
-// https://youtu.be/ed8SzALpx1Q?t=7847

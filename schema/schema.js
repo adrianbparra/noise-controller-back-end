@@ -9,7 +9,7 @@ const {
     GraphQLScalarType
 } = require('graphql');
 
-const _ = require("lodash");
+const bcrypt = require('bcrypt');
 
 const Class = require("../models/class.js");
 const User = require("../models/user.js");
@@ -65,8 +65,8 @@ const UserType = new GraphQLObjectType({
     name: "User",
     fields: () => ({
         id: {type: GraphQLID},
-        username: {type: GraphQLString},
         email: {type: GraphQLString},
+        password: {type: GraphQLString},
         firstName: {type: GraphQLString},
         lastName: {type: GraphQLString},
         title: {type: GraphQLString},
@@ -136,6 +136,24 @@ const RootQuery = new GraphQLObjectType({
                 // return users
                 return User.find({})
             }
+        },
+        login: {
+            type: UserType,
+            args: {
+                email: {type: new GraphQLNonNull(GraphQLString)},
+                password: {type: new GraphQLNonNull(GraphQLString)}
+            },
+            async resolve(parent,args){
+                const userInfo = await User.findOne({email: args.email})
+
+                if(!userInfo) throw new Error("No user found with that email")
+
+                const valid_pass = await bcrypt.compareSync(args.password, userInfo.password)
+                
+                if(!valid_pass) throw new Error("Incorrect credentials")
+
+                return userInfo
+            }
         }
     }
 });
@@ -146,8 +164,8 @@ const Mutations = new GraphQLObjectType({
         addUser: {
             type: UserType,
             args: {
-                username: {type: GraphQLString},
                 email: {type: GraphQLString},
+                password: {type: GraphQLString},
                 firstName: {type: GraphQLString},
                 lastName: {type: GraphQLString},
                 title: {type: GraphQLString},
@@ -155,9 +173,12 @@ const Mutations = new GraphQLObjectType({
                 theme: {type: GraphQLString},
             },
             resolve(parent,args){
+                
+                const hashpassword = bcrypt.hashSync(args.password, 12)
+
                 let user = new User({
-                    username: args.username,
                     email: args.email,
+                    password: hashpassword,
                     firstName: args.firstName,
                     lastName: args.lastName,
                     title: args.title,
@@ -212,7 +233,8 @@ const Mutations = new GraphQLObjectType({
 
                 return newScore.save()
             }
-        }
+        },
+
     }
 })
 

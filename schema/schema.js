@@ -124,9 +124,11 @@ const RootQuery = new GraphQLObjectType({
         user: {
             type: UserType,
             args: {id: {type: GraphQLID}},
-            resolve(parent,args){
+            resolve(parent,args,{req}){
                 // return _.find(users,{id: args.id});
                 //code to get data from db / other source
+                if(!req.session.userId) throw new Error("No Credentials, Please Sign In")
+                
                 return User.findById(args.id)
             }
         },
@@ -143,7 +145,7 @@ const RootQuery = new GraphQLObjectType({
                 email: {type: new GraphQLNonNull(GraphQLString)},
                 password: {type: new GraphQLNonNull(GraphQLString)}
             },
-            async resolve(parent,args){
+            async resolve(parent,args, {req}){
                 const userInfo = await User.findOne({email: args.email})
 
                 if(!userInfo) throw new Error("No user found with that email")
@@ -151,6 +153,8 @@ const RootQuery = new GraphQLObjectType({
                 const valid_pass = await bcrypt.compareSync(args.password, userInfo.password)
                 
                 if(!valid_pass) throw new Error("Incorrect credentials")
+
+                req.session.userId = userInfo.id
 
                 return userInfo
             }
@@ -172,9 +176,9 @@ const Mutations = new GraphQLObjectType({
                 micSensitivity: {type:GraphQLInt},
                 theme: {type: GraphQLString},
             },
-            resolve(parent,args){
+            async resolve(parent,args){
                 
-                const hashpassword = bcrypt.hashSync(args.password, 12)
+                const hashpassword = await bcrypt.hashSync(args.password, 12)
 
                 let user = new User({
                     email: args.email,

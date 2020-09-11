@@ -1,9 +1,10 @@
 const mongoose = require('mongoose');
+const uniqueValidator = require('mongoose-unique-validator');
 const Schema = mongoose.Schema;
 
 
 const userSchema = new Schema({
-    email: {type: String, required: true, unique: true, uniqueCaseInsensitive: true},
+    email: {type: String, required: true, unique: "Email is already taken", lowercase: true},
     password: {type: String, required: true},
     firstName: String,
     lastName: {type: String, required: true},
@@ -12,11 +13,6 @@ const userSchema = new Schema({
     theme: {type:String, default: "Farm"},
 });
 
-
-userSchema.path('email').validate(async (value) => {
-    const emailCount = await mongoose.models.User.countDocuments({email: value });
-    return !emailCount;
-  }, 'Email already exists');
-
+userSchema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.' })
 
 module.exports = mongoose.model('User', userSchema)

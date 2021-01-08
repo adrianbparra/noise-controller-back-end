@@ -84,10 +84,6 @@ Coming Soon!
 
 Please try to contribute if you can. Email me if you would like to contribute.
 
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning.
-
 ## Authors
 
 * **Adrian Parra** - *Initial work* - [AdrianbParra](https://github.com/adrianbparra)

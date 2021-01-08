@@ -45,7 +45,8 @@ server.use(
     '/graphql',
     bodyparser.json(),
     (req,_,next) => {
-        console.log(req.session.userId)
+        console.log("session: ",req.session)
+        console.log("id:",req.session.userId)
         next()
     },
     graphqlHTTP(req => ({

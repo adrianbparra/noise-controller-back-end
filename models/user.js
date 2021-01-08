@@ -11,6 +11,7 @@ const userSchema = new Schema({
     title: {type: String, required: true},
     micSensitivity: {type: Number, default: 5},
     theme: {type:String, default: "Farm"},
+    selectedClassId: {type:String, default:null}
 });
 
 userSchema.plugin(uniqueValidator, { message: 'Error, expected {PATH} to be unique.' })

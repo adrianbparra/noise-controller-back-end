@@ -72,6 +72,13 @@ const UserType = new GraphQLObjectType({
         title: {type: GraphQLString},
         micSensitivity: {type:GraphQLInt},
         theme: {type: GraphQLString},
+        selectedClassId: {type: GraphQLID},
+        selectedClass:{
+            type: ClassType,
+            resolve(parent,args){
+                return Class.findById(parent.selectedClassId)
+            }
+        },
         classes: {
             type: new GraphQLList(ClassType),
             resolve(parent, args){
@@ -123,13 +130,14 @@ const RootQuery = new GraphQLObjectType({
         },
         user: {
             type: UserType,
-            args: {id: {type: GraphQLID}},
+            // args: {id: {type: GraphQLID}},
             resolve(parent,args,{req}){
                 // return _.find(users,{id: args.id});
                 //code to get data from db / other source
+                
                 if(!req.session.userId) throw new Error("No Credentials, Please Sign In")
                 
-                return User.findById(args.id)
+                return User.findById(req.session.userId)
             }
         },
         users: {
@@ -139,26 +147,26 @@ const RootQuery = new GraphQLObjectType({
                 return User.find({})
             }
         },
-        login: {
-            type: UserType,
-            args: {
-                email: {type: new GraphQLNonNull(GraphQLString)},
-                password: {type: new GraphQLNonNull(GraphQLString)}
-            },
-            async resolve(parent,args, {req}){
-                const userInfo = await User.findOne({email: args.email})
+        // login: {
+        //     type: UserType,
+        //     args: {
+        //         email: {type: new GraphQLNonNull(GraphQLString)},
+        //         password: {type: new GraphQLNonNull(GraphQLString)}
+        //     },
+        //     async resolve(parent,args, {req}){
+        //         const userInfo = await User.findOne({email: args.email})
 
-                if(!userInfo) throw new Error("No user found with that email")
+        //         if(!userInfo) throw new Error("No user found with that email")
 
-                const valid_pass = await bcrypt.compareSync(args.password, userInfo.password)
+        //         const valid_pass = await bcrypt.compareSync(args.password, userInfo.password)
                 
-                if(!valid_pass) throw new Error("Incorrect credentials")
+        //         if(!valid_pass) throw new Error("Incorrect credentials")
 
-                req.session.userId = userInfo.id
+        //         req.session.userId = userInfo.id
 
-                return userInfo
-            }
-        }
+        //         return userInfo
+        //     }
+        // }
     }
 });
 
@@ -191,6 +199,35 @@ const Mutations = new GraphQLObjectType({
                 })
 
                 return user.save();
+            }
+        },
+        editUser: {
+            type: UserType,
+            args:{
+                email: {type: GraphQLString},
+                password: {type: GraphQLString},
+                firstName: {type: GraphQLString},
+                lastName: {type: GraphQLString},
+                title: {type: GraphQLString},
+                micSensitivity: {type:GraphQLInt},
+                theme: {type: GraphQLString},
+                selectedClassId: {type: GraphQLID}
+            },
+            async resolve(parent,args,{req}){
+
+                if(!req.session.userId) throw new Error("No Credentials, Please Sign In")
+
+                if ("password" in args){
+                    
+                    args.password = await bcrypt.hashSync(args.password, 12)
+                }
+
+                console.log(args)
+                let user = await User.findByIdAndUpdate({_id:req.session.userId},{
+                    ...args
+                },{new:true})
+
+                return user
             }
         },
         addClass: {
@@ -238,6 +275,26 @@ const Mutations = new GraphQLObjectType({
                 return newScore.save()
             }
         },
+        login: {
+            type: UserType,
+            args: {
+                email: {type: new GraphQLNonNull(GraphQLString)},
+                password: {type: new GraphQLNonNull(GraphQLString)}
+            },
+            async resolve(parent,args, {req}){
+                const userInfo = await User.findOne({email: args.email})
+
+                if(!userInfo) throw new Error("No user found with that email")
+
+                const valid_pass = await bcrypt.compareSync(args.password, userInfo.password)
+                
+                if(!valid_pass) throw new Error("Incorrect credentials")
+
+                req.session.userId = userInfo.id
+
+                return userInfo
+            }
+        }
 
     }
 })

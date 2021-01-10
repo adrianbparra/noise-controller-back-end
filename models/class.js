@@ -6,7 +6,6 @@ const classSchema = new Schema({
     theme: {type:String, default: "Farm"},
     grade: {type: String, required: true},
     numberOfKids: {type: Number, required: true},
-    // streak: {type: Number, default: 0},
     teacherId: {type: String, required: true},
     scores: [
         {
@@ -15,10 +14,7 @@ const classSchema = new Schema({
             score: {type: Number, required: true},
         }
     ],
-    // teacher: {
-    //     type: Schema.Types.ObjectId,
-    //     ref: "users"
-    // }
+    highestScore: {type: Number, default: 0}
 });
 
 

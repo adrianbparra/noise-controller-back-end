@@ -11,6 +11,7 @@ module.exports = gql`
         numberOfKids: Int!
         teacherId: String!
         scores: [Score]!
+        highestScore: Int!
     }
     type Score{
         id: ID!

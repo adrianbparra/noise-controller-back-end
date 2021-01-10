@@ -24,13 +24,13 @@ module.exports = {
             const {valid, errors} = validateRegisterInput(email,password, lastName, title);
 
             if (!valid){
-                throw new UserInputError('Errors', {errors})
+                throw new UserInputError('Unable to Register', {errors})
             }
 
             const user = await User.findOne({email});
 
             if ( user ){
-                throw new UserInputError("Username is taken", {
+                throw new UserInputError("Email address is already taken", {
                     errors: {
                         email: "This email address is taken"
                     }
@@ -52,22 +52,17 @@ module.exports = {
 
             const res = await newUser.save();
 
-            // create token for auth
-            // Might only do this in login no register
-            // const token = generateToken(user)
 
-            console.log(res)
             return {
                 ...res._doc,
                 id: res._id,
-                // token
             }
         },
         async login(_, {email, password}){
             const {valid, errors} = validateLoginInput(email,password);
 
             if (!valid){
-                throw new UserInputError('Errors', {errors})
+                throw new UserInputError('Unable to login', {errors})
             }
 
             const user = await User.findOne({email})

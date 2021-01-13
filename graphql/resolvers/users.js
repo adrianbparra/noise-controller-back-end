@@ -14,7 +14,7 @@ function generateToken(user) {
         firstName: user.firstName
     },
     SECRET_KEY,
-    {expiresIn: "1h"}
+    {expiresIn: "24h"}
     )
 }
 
@@ -30,9 +30,9 @@ module.exports = {
             const user = await User.findOne({email});
 
             if ( user ){
-                throw new UserInputError("Email address is already taken", {
+                throw new UserInputError('Unable to Register', {
                     errors: {
-                        email: "This email address is taken"
+                        email: "This email address is already taken. Please login."
                     }
                 })
             }
@@ -68,9 +68,9 @@ module.exports = {
             const user = await User.findOne({email})
 
             if (!user){
-                throw new UserInputError('Email does not exist', {
+                throw new UserInputError('Unable to login', {
                     errors: {
-                    email: "This email address does not exist"
+                    email: "This email address does not exist. Please register"
                 }})
             }
 
@@ -78,7 +78,7 @@ module.exports = {
 
             if (!pass_match){
 
-                throw new UserInputError("Password does not match", {errors: {
+                throw new UserInputError("Unable to login", {errors: {
 
                     password: "Password does not match"}
                 })

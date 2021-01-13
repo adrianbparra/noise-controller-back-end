@@ -1,6 +1,6 @@
 {
   "name": "noise-controller-back-end",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "'Back end for noise controller to handle user data'",
   "main": "server.js",
   "scripts": {
@@ -15,7 +15,10 @@
   "keywords": [
     "node",
     "graphql",
-    "express"
+    "apollo",
+    "jsonwebtoken",
+    "mongoose",
+    "server"
   ],
   "homepage": "https://github.com/adrianbparra/noise-controller-back-end#readme",
   "author": "Adrian Parra",
@@ -23,17 +26,12 @@
   "dependencies": {
     "apollo-server": "^2.19.1",
     "bcrypt": "^5.0.0",
-    "body-parser": "^1.19.0",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "express-graphql": "^0.11.0",
-    "express-session": "^1.17.1",
     "graphql": "^15.3.0",
     "graphql-tag": "^2.11.0",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.10.0",
-    "mongoose-unique-validator": "^2.0.3"
+    "mongoose": "^5.10.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"

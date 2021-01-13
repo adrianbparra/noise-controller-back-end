@@ -28,24 +28,25 @@ yarn start server
 
 ### Users
 
-Add User
+Register
 ```
 mutation{
-    addUser(
+    register(registerInput:{    
         email: String | Required | Unique
         password: String | Required
-        firstName: String
-        lastName: String | Required
         title: String | Required
+        lastName: String | Required
+        firstName: String
         micSensitivity: Int | Default = 5
         theme: String | Default = "Farm"
+    }
     ){}
 }
 
 ```
 Login
 ```
-query{
+mutation{
     login(
         email: String | Required
         password: String | Required
@@ -76,9 +77,9 @@ Coming Soon!
 ## Built With
 
 * [Node.js](https://nodejs.org/en/docs/) - Running on Node
-* [Express](https://expressjs.com/en/starter/installing.html) - Server Routing
+* [Apollo Server](https://www.apollographql.com/docs/apollo-server/) - Server Routing
 * [GraphQL](https://graphql.org/graphql-js/running-an-express-graphql-server/) - Query Builder
-* [MondoDB](http://mongodb.github.io/node-mongodb-native/3.4/quick-start/quick-start/) - Server
+* [MongoDB](http://mongodb.github.io/node-mongodb-native/3.4/quick-start/quick-start/) - Server Database
 
 ## Contributing
 

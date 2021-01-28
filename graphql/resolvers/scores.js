@@ -9,73 +9,66 @@ module.exports = {
         async addScore(_, { classId, theme, score}, context){
             const user = checkAuth(context)
             
-            try {
-                classroom = await Class.findById(classId);
+            classroom = await Class.findById(classId);
+            
+            if (classroom){
+                console.log(user.id === classroom.teacherId)
                 
-                if (classroom){
+                if (user.id === classroom.teacherId){
                     
-                    if (user.id === classroom.teacherId){
+                    classroom.scores.unshift({
+                        theme,
+                        score,
+                        createdAt: new Date().toISOString()
+                    })
+                    await classroom.save()
 
-                        classroom.scores.unshift({
-                            theme,
-                            score,
-                            createdAt: new Date().toISOString()
-                        })
-                        await classroom.save()
-
-                        return classroom
-
-                    } else {
-                        throw new AuthenticationError("User not allowed to add score");
-                    }
+                    return classroom
 
                 } else {
-
-                    throw new UserInputError("Unable to add score")
-
+                    throw new AuthenticationError("User not allowed to add score");
                 }
-            } catch (error) {
-                throw new ApolloError("Unable to add score",{errors:error})
+
+            } else {
+
+                throw new UserInputError("Unable to add score")
 
             }
+
             
         },
         async deleteScore(_,{classId, scoreId},context){
 
             const user = checkAuth(context);
 
-           try {
-               
-               const classroom = await Class.findById(classId);
-               
-               if (classroom){
-       
-                   if (classroom.teacherId === user.id){
-   
-                       const scoreIndex = classroom.scores.findIndex(s => s.id === scoreId);
-   
-                       console.log(scoreIndex)
-   
-                       if (scoreIndex < 0){
-                           throw new UserInputError("Unable to find score")
-                       }
-   
-                       classroom.scores.splice(scoreIndex, 1);
-   
-                       await classroom.save();
-                       
-                       return classroom
-       
-                   } else {
-                       throw new AuthenticationError("User not allowed to delete score");
-                   }
-   
-               } else {
-                   throw new UserInputError("Unable to delete score")
-               }
-           } catch (error) {
-               throw new ApolloError("Unable to delete score", {errors: error})
-           }
+            const classroom = await Class.findById(classId);
+            
+            if (classroom){
+    
+                if (classroom.teacherId === user.id){
+
+                    const scoreIndex = classroom.scores.findIndex(s => s.id === scoreId);
+
+                    console.log(scoreIndex)
+
+                    if (scoreIndex < 0){
+                        throw new UserInputError("Unable to find score")
+                    }
+
+                    classroom.scores.splice(scoreIndex, 1);
+
+                    await classroom.save();
+                    
+                    return classroom
+    
+                } else {
+                    throw new AuthenticationError("User not allowed to delete score");
+                }
+
+            } else {
+                throw new ApolloError("Unable to delete score")
+            }
+
             
         }
     }

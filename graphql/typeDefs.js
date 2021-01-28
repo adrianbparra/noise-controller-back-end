@@ -10,7 +10,7 @@ module.exports = gql`
         grade: String!
         numberOfKids: Int!
         teacherId: String!
-        scores: [Score]!
+        scores: [Score!]
         highestScore: Int!
     }
     type Score{
@@ -30,6 +30,7 @@ module.exports = gql`
         theme: String!
         createdAt: String!
         token: String!
+        classes: [Class!]
     }
     # Input variables
     input RegisterInput{
@@ -45,6 +46,7 @@ module.exports = gql`
     type Query{
         getClasses: [Class]
         getClass(classId: ID!): Class!
+        getUserClasses(teacherId: ID!): [Class]
     }
     # Mutations
     type Mutation{

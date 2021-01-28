@@ -6,7 +6,7 @@ const checkAuth = require('../../utils/auth')
 
 module.exports = {
     Query: {
-        async getClasses(){
+        async getClasses(parent){
             try{
                 const classes = await Class.find();
                 return classes
@@ -30,6 +30,21 @@ module.exports = {
                 throw new UserInputError("Unable to find Class", {errors: error})
             }
 
+        },
+        async getUserClasses(teacherId){
+            try {
+
+                const classrooms = await Class.find(teacherId)
+                
+                if (classrooms) {
+                    return classrooms
+                } else {
+                    throw new UserInputError("Class not found");
+                }
+            } catch (error) {
+                // console.error(error)
+                throw new UserInputError("Unable to find Class", {errors: error})
+            }
         }
         
     },

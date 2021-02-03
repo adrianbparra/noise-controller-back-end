@@ -31,6 +31,7 @@ module.exports = gql`
         createdAt: String!
         token: String!
         classes: [Class!]
+        selectedClass: Class
     }
     # Input variables
     input RegisterInput{
@@ -47,6 +48,7 @@ module.exports = gql`
         getClasses: [Class]
         getClass(classId: ID!): Class!
         getUserClasses(teacherId: ID!): [Class]
+        getUser: User!
     }
     # Mutations
     type Mutation{

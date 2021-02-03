@@ -1,10 +1,12 @@
 const User = require("../../models/User");
-const { UserInputError } = require("apollo-server")
+const { UserInputError, ApolloError } = require("apollo-server")
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 
 const { validateRegisterInput, validateLoginInput } = require("../../utils/validators");
-const SECRET_KEY = process.env.SECRET_KEY
+const checkAuth = require('../../utils/auth');
+
+const SECRET_KEY = process.env.SECRET_KEY;
 
 
 function generateToken(user) {
@@ -19,6 +21,22 @@ function generateToken(user) {
 }
 
 module.exports = {
+    Query: {
+        async getUser(_,__,context){
+            const user = checkAuth(context);
+
+            try {
+                const {id} = user
+                const userData = await User.findById(id);
+
+                return userData
+            } catch (error) {
+                ApolloError("Error getting user data", {errors : error})
+
+            }
+
+        }
+    },
     Mutation: {
         async register(_, {registerInput: {email, password, firstName, lastName, title, micSensitivity, theme}}, context, info){
             const {valid, errors} = validateRegisterInput(email,password, lastName, title);

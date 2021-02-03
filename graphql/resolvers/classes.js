@@ -6,9 +6,10 @@ const checkAuth = require('../../utils/auth')
 
 module.exports = {
     Query: {
-        async getClasses(parent){
+        async getClasses(_, __, context){
+            const user = checkAuth(context)
             try{
-                const classes = await Class.find();
+                const classes = await Class.find({teacherId: user.id});
                 return classes
             } catch (err){
                 throw new UserInputError("Error searching for classes");

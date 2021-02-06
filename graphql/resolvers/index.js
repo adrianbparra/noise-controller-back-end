@@ -26,11 +26,10 @@ module.exports = {
             }
         },
         async selectedClass(parent){
-            console.log(parent)
             const {selectedClassId} = parent
             try {
                 if (selectedClassId){
-                    const selected = await Class.findById( selectedClassId)
+                    const selected = await Class.findById(selectedClassId)
 
                     return selected
 

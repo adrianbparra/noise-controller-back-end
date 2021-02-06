@@ -1,6 +1,7 @@
 const { AuthenticationError, UserInputError, ApolloError } = require("apollo-server");
 
-const Class = require("../../models/Class")
+const Class = require("../../models/Class");
+const User = require("../../models/User");
 const checkAuth = require('../../utils/auth')
 
 
@@ -53,7 +54,6 @@ module.exports = {
         async addClass(_, {name, theme, grade, numberOfKids}, context){
             const user = checkAuth(context)
 
-            // console.log(user)
             try {
                 
                 const newClass = new Class({
@@ -65,6 +65,8 @@ module.exports = {
                 })
     
                 const classroom = await newClass.save()
+
+                const updateSelected = await User.updateOne({_id: user.id}, {selectedClassId: classroom.id})
     
                 return classroom
             } catch (error) {

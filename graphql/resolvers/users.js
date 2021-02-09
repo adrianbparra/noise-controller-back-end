@@ -1,9 +1,11 @@
-const User = require("../../models/User");
 const { UserInputError, ApolloError } = require("apollo-server")
 const bcrypt = require('bcrypt');
 const jwt = require("jsonwebtoken");
 
-const { validateRegisterInput, validateLoginInput } = require("../../utils/validators");
+const User = require("../../models/User");
+const Class = require("../../models/Class");
+
+const { validateRegisterInput, validateLoginInput, validateUserVariables } = require("../../utils/validators");
 const checkAuth = require('../../utils/auth');
 
 const SECRET_KEY = process.env.SECRET_KEY;
@@ -112,6 +114,42 @@ module.exports = {
                 id: user._id,
                 token
             }
+        },
+        async updateUser(_, variables, context){
+            console.log("variables", variables)
+            const {valid, errors} = validateUserVariables(variables);
+            
+            if(!valid){
+                
+                return new UserInputError("Unable to update", {errors})
+            
+            }
+
+            const user = checkAuth(context)
+
+            var userData = await User.findById(user.id)
+
+            if (variables["password"]){
+                // console.log(variables.password)
+            }
+            if (variables.hasOwnProperty("selectedClassId")){
+
+                const classFound = await Class.findById(variables.selectedClassId)
+                
+                if (user.id === classFound.teacherId){
+                    
+                    userData.selectedClassId = classFound.id
+                    // console.log(classFound)
+                } else {
+                    return new UserInputError("Unable to update", { errors : {
+                        selectedClassId: "User unable to edit"
+                    }})
+                }
+                
+            }
+
+            userData = await userData.save()
+            return userData
         }
     }
 }

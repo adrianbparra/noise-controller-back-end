@@ -55,6 +55,7 @@ module.exports = gql`
         # (what is required) : What is returned
         register(registerInput: RegisterInput): User!
         login(email: String!, password: String!): User!
+        updateUser(email: String, password: String, firstName: String, lastName: String, title: String, micSensitivity: Int, theme: String, selectedClassId: String): User!
         
         addClass(name: String!, theme: String, grade: String!, numberOfKids: Int!): Class! 
         editClass(classId:ID!, name: String, theme: String, grade: String, numberOfKids: Int) :Class!

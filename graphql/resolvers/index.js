@@ -14,8 +14,8 @@ module.exports = {
         }
     },
     User: {
-
         async classes(parent){
+
             try {
 
                 const classes = await Class.find({teacherId: parent._id}) 
@@ -26,7 +26,8 @@ module.exports = {
             }
         },
         async selectedClass(parent){
-            const {selectedClassId} = parent
+            const {selectedClassId} = parent;
+
             try {
                 if (selectedClassId){
                     const selected = await Class.findById(selectedClassId)
@@ -38,6 +39,23 @@ module.exports = {
                 }
             } catch (error) {
                 ApolloError("Unable to get selected class", {errors : error})
+                
+            }
+        },
+        async theme(parent){
+            const {selectedClassId} = parent;
+
+            try {
+                if (selectedClassId){
+                    const selected = await Class.findById(selectedClassId)
+
+                    return selected.theme
+
+                } else{
+                    return "Farm"
+                }
+            } catch (error) {
+                ApolloError("Unable to get Theme", {errors : error})
                 
             }
         }

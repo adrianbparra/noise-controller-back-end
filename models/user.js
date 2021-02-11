@@ -8,7 +8,6 @@ const userSchema = new Schema({
     lastName: {type: String, required: true},
     title: {type: String, required: true},
     micSensitivity: {type: Number, default: 5},
-    theme: {type:String, default: "Farm"},
     selectedClassId: {type:String, default:null},
     createdAt: {type: String, required: true}
 });

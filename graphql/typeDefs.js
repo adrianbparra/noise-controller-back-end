@@ -27,7 +27,7 @@ module.exports = gql`
         lastName: String
         title: String!
         micSensitivity: Int!
-        theme: String!
+        theme: String
         createdAt: String!
         token: String!
         classes: [Class!]
@@ -41,7 +41,6 @@ module.exports = gql`
         lastName: String!
         title: String!
         micSensitivity: Int
-        theme: String
     }
     # Queries
     type Query{
@@ -55,7 +54,7 @@ module.exports = gql`
         # (what is required) : What is returned
         register(registerInput: RegisterInput): User!
         login(email: String!, password: String!): User!
-        updateUser(email: String, password: String, firstName: String, lastName: String, title: String, micSensitivity: Int, theme: String, selectedClassId: String): User!
+        updateUser(email: String, password: String, firstName: String, lastName: String, title: String, micSensitivity: Int, selectedClassId: String): User!
         
         addClass(name: String!, theme: String, grade: String!, numberOfKids: Int!): Class! 
         editClass(classId:ID!, name: String, theme: String, grade: String, numberOfKids: Int) :Class!

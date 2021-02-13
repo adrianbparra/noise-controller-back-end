@@ -22,6 +22,10 @@ module.exports.validateRegisterInput = (
         errors.password = "Password must not be empty"
     }
 
+    if (password.length <= 8){
+        errors.password = "Password must be at least 8 characters"
+    }
+
     if (lastName.trim() === ""){
         errors.lastName = "Last name must not be empty"
     }
@@ -78,6 +82,10 @@ module.exports.validateUserVariables = (variables) => {
             errors.password = "Password must not be empty"
         }
 
+        if (variables.password.length <= 8){
+            errors.password = "Password must be at least 8 characters"
+        }
+
     }
 
     if (variables.hasOwnProperty("lastName")){
@@ -93,10 +101,19 @@ module.exports.validateUserVariables = (variables) => {
         }
     }
 
-    if (!variables.selectedClassId.match(/^[0-9a-fA-F]{24}$/)) {
-        errors.selectedClassId = "Invalid Class"
-
+    if (variables.hasOwnProperty("selectedClassId")){
+        if (!variables.selectedClassId.match(/^[0-9a-fA-F]{24}$/)) {
+            errors.selectedClassId = "Invalid Class"
+    
+        }
     }
+
+    if (variables.hasOwnProperty("micSensitivity")){
+        if (variables.micSensitivity < 1 || variables.micSensitivity > 10){
+            errors.micSensitivity = "Value must be between 1 and 10"
+        }
+    }
+
 
     return {
         errors,

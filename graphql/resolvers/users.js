@@ -40,7 +40,7 @@ module.exports = {
         }
     },
     Mutation: {
-        async register(_, {registerInput: {email, password, firstName, lastName, title, micSensitivity, theme}}, context, info){
+        async register(_, {registerInput: {email, password, firstName, lastName, title, micSensitivity}}){
             const {valid, errors} = validateRegisterInput(email,password, lastName, title);
 
             if (!valid){
@@ -66,7 +66,6 @@ module.exports = {
                 lastName: lastName,
                 title: title,
                 micSensitivity: micSensitivity,
-                theme: theme,
                 createdAt: new Date().toISOString()
             })
 
@@ -129,8 +128,26 @@ module.exports = {
 
             var userData = await User.findById(user.id)
 
-            if (variables["password"]){
-                // console.log(variables.password)
+            if (variables.hasOwnProperty("title")){
+                userData.title = variables.title
+            }
+
+            if (variables.hasOwnProperty("firstName")){
+                userData.firstName = variables.firstName
+            }
+
+            if (variables.hasOwnProperty("lastName")){
+                userData.lastName = variables.lastName
+            }
+
+            if (variables.hasOwnProperty("micSensitivity")){
+                userData.micSensitivity = variables.micSensitivity
+            }
+
+            if (variables.hasOwnProperty("password")){
+                variables.password = await bcrypt.hashSync(password, 12);
+                userData.password = variables.password
+
             }
             if (variables.hasOwnProperty("selectedClassId")){
 
@@ -139,7 +156,7 @@ module.exports = {
                 if (user.id === classFound.teacherId){
                     
                     userData.selectedClassId = classFound.id
-                    // console.log(classFound)
+ 
                 } else {
                     return new UserInputError("Unable to update", { errors : {
                         selectedClassId: "User unable to edit"

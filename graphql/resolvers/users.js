@@ -167,6 +167,21 @@ module.exports = {
 
             userData = await userData.save()
             return userData
+        },
+        async deleteUser(_,__,context){
+            const user = checkAuth(context)
+
+            const userDeleted = await User.findOneAndDelete({_id:user.id})
+
+            if (userDeleted){
+                return {
+                    "message": "User Deleted",
+                    "user": `${userDeleted.title}${userDeleted.lastName}`
+                }
+            } else {
+                throw new UserInputError('No user found to delete')
+            }
+
         }
     }
 }

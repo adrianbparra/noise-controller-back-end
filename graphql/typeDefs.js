@@ -49,13 +49,19 @@ module.exports = gql`
         getUserClasses(teacherId: ID!): [Class]
         getUser: User!
     }
+
+    type DeleteMessage {
+        message: String!
+        user: String!
+    }
     # Mutations
     type Mutation{
         # (what is required) : What is returned
         register(registerInput: RegisterInput): User!
         login(email: String!, password: String!): User!
         updateUser(email: String, password: String, firstName: String, lastName: String, title: String, micSensitivity: Int, selectedClassId: String): User!
-        
+        deleteUser: DeleteMessage!
+
         addClass(name: String!, theme: String, grade: String!, numberOfKids: Int!): Class! 
         editClass(classId:ID!, name: String, theme: String, grade: String, numberOfKids: Int) :Class!
         deleteClass(classId: ID!): String!

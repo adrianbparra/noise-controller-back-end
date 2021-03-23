@@ -51,7 +51,7 @@ module.exports = {
 
                     return selected.theme
 
-                } else{
+                } else {
                     return "Farm"
                 }
             } catch (error) {

@@ -174,6 +174,7 @@ module.exports = {
             const userDeleted = await User.findOneAndDelete({_id:user.id})
 
             if (userDeleted){
+                await Class.deleteMany({teacherId: user.id})
                 return {
                     "message": "User Deleted",
                     "user": `${userDeleted.title}${userDeleted.lastName}`

@@ -1,6 +1,6 @@
 FROM node:12.18-alpine
 ENV NODE_ENV=production
-WORKDIR /usr/src/app
+WORKDIR /usr/src/server
 COPY ["package.json", "yarn.lock", "./"]
 RUN yarn install --production --silent && mv node_modules ../
 COPY . .

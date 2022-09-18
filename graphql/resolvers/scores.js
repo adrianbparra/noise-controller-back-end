@@ -1,7 +1,7 @@
 const { AuthenticationError, UserInputError, ApolloError } = require("apollo-server");
 
-const Class = require("../../models/Class")
-const checkAuth = require('../../utils/auth')
+const Class = require("../../models/class.js");
+const checkAuth = require("../../utils/auth.js");
 
 
 module.exports = {

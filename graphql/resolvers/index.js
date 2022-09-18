@@ -1,10 +1,10 @@
 const { ApolloError } = require("apollo-server");
 
-const classResolvers = require("./classes");
-const userResolvers = require("./users");
-const scoresResolvers = require("./scores");
+const classResolvers = require("./classes.js");
+const userResolvers = require("./users.js");
+const scoresResolvers = require("./scores.js");
 
-const Class = require("../../models/Class")
+const Class = require("../../models/class.js")
 
 
 module.exports = {
